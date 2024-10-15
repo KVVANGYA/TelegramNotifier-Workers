@@ -2,6 +2,8 @@
 
 TelegramNotifier-Workers 是一个使用 Workers 将网络请求转换为 Telegram 通知的项目。
 
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/KVVANGYA/TelegramNotifier-Workers)
+
 ## 功能
 
 - 监听特定路径的 HTTP 请求
