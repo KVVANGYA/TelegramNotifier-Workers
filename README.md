@@ -13,7 +13,7 @@ TelegramNotifier-Workers 是一个使用 Workers 将网络请求转换为 Telegr
 1. 克隆此仓库到本地：
 
    ```bash
-   git clone https://github.com/yourusername/TelegramNotifier-Workers.git
+   git clone https://github.com/KVVANGYA/TelegramNotifier-Workers.git
    ```
 
 2. 进入项目目录：
