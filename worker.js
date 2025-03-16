@@ -39,6 +39,9 @@ async function handleRequest(request) {
 async function sendTelegramMessage(token, chatId, message) {
   const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage`
 
+  // 将 \n 转换为实际的换行符
+  const formattedMessage = message.replace(/\\n/g, '\n')
+
   const response = await fetch(telegramUrl, {
     method: 'POST',
     headers: {
@@ -46,7 +49,8 @@ async function sendTelegramMessage(token, chatId, message) {
     },
     body: JSON.stringify({
       chat_id: chatId,
-      text: message
+      text: formattedMessage,
+      parse_mode: 'MarkdownV2'  // 添加 Markdown 解析模式
     })
   })
 
