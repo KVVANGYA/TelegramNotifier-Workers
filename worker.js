@@ -13,7 +13,10 @@ async function handleRequest(request) {
   if (url.pathname === '/notify') {
     const token = url.searchParams.get('token')
     const chatId = url.searchParams.get('chatid')
-    const message = url.searchParams.get('message') || 'URL 被请求了！'
+    let message = url.searchParams.get('message') || 'URL 被请求了！'
+
+    // 对 message 参数进行 URL 解码
+    message = decodeURIComponent(message)
 
     if (!token || !chatId) {
       return new Response('缺少 token 或 chatid 参数。', { status: 400 })
@@ -23,7 +26,8 @@ async function handleRequest(request) {
       await sendTelegramMessage(token, chatId, message)
       return new Response('通知已发送。', { status: 200 })
     } catch (error) {
-      return new Response('发送通知时出错。', { status: 500 })
+      console.error('Error sending Telegram message:', error.message); // Log the specific error
+      return new Response(`发送通知时出错: ${error.message}`, { status: 500 })
     }
   }
 
@@ -40,7 +44,10 @@ async function sendTelegramMessage(token, chatId, message) {
   const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage`
 
   // 将 \n 转换为实际的换行符
-  const formattedMessage = message.replace(/\\n/g, '\n')
+  let formattedMessage = message.replace(/\\n/g, '\n')
+
+  // Escape MarkdownV2 special characters
+  formattedMessage = escapeMarkdownV2(formattedMessage)
 
   const response = await fetch(telegramUrl, {
     method: 'POST',
@@ -58,4 +65,14 @@ async function sendTelegramMessage(token, chatId, message) {
     const errorText = await response.text()
     throw new Error(`发送 Telegram 消息失败: ${errorText}`)
   }
+}
+
+/**
+ * Escapes characters for Telegram MarkdownV2 parse mode.
+ * @param {string} text The text to escape.
+ * @returns {string} The escaped text.
+ */
+function escapeMarkdownV2(text) {
+  // Characters to escape: _ * [ ] ( ) ~ ` > # + - = | { } . !
+  return text.replace(/([_*[\]()~`>#+\-=|{}.!])/g, '\\$1');
 }
